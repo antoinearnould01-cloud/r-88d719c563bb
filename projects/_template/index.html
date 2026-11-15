@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>{{TITLE}} - Antoine Arnould</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/site.js"></script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#content">Skip to content</a>
+  <nav class="topbar" aria-label="Site">
+    <div class="page"><a href="../../index.html">&larr; All projects</a></div>
+  </nav>
+
+  <!--
+    HOW TO FILL THIS PAGE
+    - Keep the sections in this order. Delete any section that stays empty.
+    - Equations: write LaTeX between $...$ (inline) or $$...$$ (display).
+      In HTML, write &lt; for <, &gt; for > and &amp; for & inside equations.
+    - Figures: put PNG or WebP files in img/ (max 1600 px wide, under 300 kB),
+      and always fill the alt text.
+    - Only write what is in the project's own sources (report, repository).
+  -->
+
+  <main id="content" class="page">
+    <header class="project-header">
+      <h1>{{TITLE}}</h1>
+      <p class="context">Place &middot; Period &middot; Type of project</p>
+    </header>
+
+    <section aria-labelledby="summary">
+      <h2 id="summary">Summary</h2>
+      <p>Two or three sentences that a non-specialist can read.</p>
+    </section>
+
+    <section aria-labelledby="question">
+      <h2 id="question">Question</h2>
+      <p>The physical problem.</p>
+    </section>
+
+    <section aria-labelledby="method">
+      <h2 id="method">Model and method</h2>
+      <p>Model, key equations, numerical or experimental method. Inline math: $E = \hbar\omega$.</p>
+      $$ \hat{H}\,\psi = E\,\psi $$
+    </section>
+
+    <section aria-labelledby="results">
+      <h2 id="results">Results</h2>
+      <!-- 3 to 6 figures, each with a caption of one or two sentences. -->
+      <figure>
+        <a href="img/figure1.png">
+          <img src="img/figure1.png" alt="Describe what the figure shows" loading="lazy">
+        </a>
+        <figcaption>Caption in one or two sentences.</figcaption>
+      </figure>
+    </section>
+
+    <!-- Optional: an interactive widget from assets/widgets/.
+    <section aria-labelledby="interactive">
+      <h2 id="interactive">Interactive</h2>
+      <div class="widget" id="widget"></div>
+      <script defer src="../../assets/widgets/NAME.js"></script>
+    </section>
+    -->
+
+    <section aria-labelledby="contribution">
+      <h2 id="contribution">My contribution</h2>
+      <p>What I did myself, in one or two sentences.</p>
+    </section>
+
+    <section aria-labelledby="limits">
+      <h2 id="limits">Limits and open questions</h2>
+      <ul>
+        <li>First limit.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="documents">
+      <h2 id="documents">Code and documents</h2>
+      <ul>
+        <li><a href="https://github.com/antoinearnould01-cloud">Code on GitHub</a></li>
+        <li>Report (PDF)</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="skills">
+      <h2 id="skills">Skills</h2>
+      <ul class="tags">
+        <li>Python</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="page">
+      <span>&copy; <span data-year>2026</span> Antoine Arnould</span>
+      <a href="#top">Back to top</a>
+    </div>
+  </footer>
+</body>
+</html>

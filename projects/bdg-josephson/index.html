@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>BdG study of SNS Josephson junctions - Antoine Arnould</title>
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/site.css">
+  <script defer src="../../assets/vendor/katex/katex.min.js"></script>
+  <script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../../assets/site.js"></script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#content">Skip to content</a>
+  <nav class="topbar" aria-label="Site">
+    <div class="page"><a href="../../index.html">&larr; All projects</a></div>
+  </nav>
+
+  <main id="content" class="page">
+    <header class="project-header">
+      <h1>BdG study of SNS Josephson junctions</h1>
+      <p class="context">KTH Royal Institute of Technology, Stockholm &middot; Spring 2026 &middot; Research project</p>
+    </header>
+
+    <section aria-labelledby="summary">
+      <h2 id="summary">Summary</h2>
+      <p>
+        In a Josephson junction, a current flows without dissipation between two superconductors
+        separated by a weak link, and its value depends on the phase difference $\phi$ between them.
+        I wrote a self-consistent tight-binding Bogoliubov-de Gennes (BdG) solver in Python for
+        one-dimensional junctions whose weak link is a normal metal (SNS junctions), and used it to
+        compute this current-phase relation for junctions of varying length, temperature and
+        transparency.
+      </p>
+      <p>
+        The simulations recover the main analytical limits: the $\sin(\phi/2)$ shape of short
+        transparent junctions, the single-channel Beenakker formula with Fabry-Pérot oscillations
+        when the normal region reflects electrons, and the Ishii sawtooth of long junctions.
+      </p>
+    </section>
+
+    <section aria-labelledby="question">
+      <h2 id="question">Question</h2>
+      <p>
+        A tunnel junction has a sinusoidal current-phase relation (CPR), $I(\phi) = I_{\max}\sin\phi$.
+        SNS junctions can deviate strongly from this shape. Analytical theories give closed-form
+        CPRs, but only under idealized assumptions (short or long junction, step-like gap profile).
+      </p>
+      <p>
+        The project asks how the skewness of the CPR, measured by the critical current $I_{\max}$
+        and the phase $\phi_{\max}$ at which it is reached, depends on temperature, junction length
+        and normal-region transparency, and how far the analytical formulas describe a
+        self-consistent lattice calculation.
+      </p>
+    </section>
+
+    <section aria-labelledby="method">
+      <h2 id="method">Model and method</h2>
+
+      <h3>Tight-binding model</h3>
+      <p>
+        The junction is a chain of $N = 2N_S + N_N$ sites with nearest-neighbour hopping $t$,
+        chemical potential $\mu_S$ in the superconducting leads and $\mu_N$ in the normal region,
+        and an on-site attraction $U &lt; 0$ in the leads only. There is no interface barrier: the
+        only source of normal reflection is a Fermi-wavevector mismatch $\mu_N \neq \mu_S$.
+        After a mean-field decoupling of the attractive Hubbard interaction, the quasiparticle
+        amplitudes $(u_i^{(n)}, v_i^{(n)})$ and energies $E_n$ are the eigenvectors and eigenvalues
+        of the $2N \times 2N$ BdG matrix
+      </p>
+      $$
+      \mathcal{H}_{ij} =
+      \begin{pmatrix}
+        h_{ij} &amp; \Delta_i\,\delta_{ij} \\
+        \Delta_i^{*}\,\delta_{ij} &amp; -h_{ij}^{*}
+      \end{pmatrix},
+      \qquad
+      h_{ij} = -\mu_i\,\delta_{ij} - t\,(\delta_{i,j+1} + \delta_{i+1,j}) .
+      $$
+
+      <h3>Self-consistency</h3>
+      <p>The order parameter must satisfy the gap equation, with $\beta = 1/k_B T$:</p>
+      $$
+      \Delta_i = -\frac{U}{2} \sum_{n} u_i^{(n)} v_i^{(n)*}
+      \tanh\!\left(\frac{\beta E_n}{2}\right) .
+      $$
+      <p>
+        Starting from a step profile, the solver diagonalises $\mathcal{H}$, recomputes $\Delta_i$,
+        mixes the old and new profiles, and repeats until convergence. The supercurrent on each bond
+        follows from the continuity equation and sums over all eigenstates:
+      </p>
+      $$
+      J_{j\to i} = \frac{2e}{\hbar}\,
+      \mathrm{Im}\!\left( t_{ij} \sum_{n} \left[ u_i^{(n)*} u_j^{(n)}\, n_F(E_n)
+      + v_i^{(n)} v_j^{(n)*}\, n_F(-E_n) \right] \right) .
+      $$
+      <p>
+        Energies are in units of $t$, lengths in lattice sites and currents in units of $2et/\hbar$.
+      </p>
+
+      <h3>Phase boundary conditions</h3>
+      <ul>
+        <li>
+          <strong>Fixed phase in the leads (FPL).</strong> The phases $\mp\phi/2$ are imposed on the
+          whole leads, so the full phase drop occurs across the normal region. The leads then carry
+          no supercurrent, which violates current conservation, but the complete CPR is accessible.
+        </li>
+        <li>
+          <strong>Fixed phase at the boundaries (FPB).</strong> Only the outermost sites are pinned.
+          The leads develop a phase gradient and current is conserved; the phase difference seen by
+          the normal region is smaller than the applied one.
+        </li>
+      </ul>
+      <p>
+        FPB is used for long junctions where it can reach the critical current, FPL for short ones.
+        To test analytical formulas under their own assumptions, the solver can also diagonalise
+        once with a frozen step-function gap.
+      </p>
+
+      <h3>Analytical references</h3>
+      <p>
+        For a short junction ($L \ll \xi_0$, with $\xi_0 = \hbar v_F/\Delta_0$ the coherence length),
+        the current is carried by one pair of Andreev bound states. With a normal region of
+        transmission probability $\mathcal{T}$, the single-channel Beenakker formula reads
+      </p>
+      $$
+      I(\phi) = \frac{e\Delta_0}{2\hbar}\,
+      \frac{\mathcal{T}\sin\phi}{\sqrt{1 - \mathcal{T}\sin^2(\phi/2)}}\,
+      \tanh\!\left( \frac{\Delta_0}{2k_B T} \sqrt{1 - \mathcal{T}\sin^2(\phi/2)} \right) .
+      $$
+      <p>
+        For $\mathcal{T} = 1$ it reduces to the ballistic result
+        $I \propto \sin(\phi/2)\tanh\!\big(\Delta_0\cos(\phi/2)/2k_BT\big)$, and for
+        $\mathcal{T} \ll 1$ to $I \propto \sin\phi$. For a chemical-potential mismatch, matching
+        plane waves at the two interfaces gives
+      </p>
+      $$
+      \mathcal{T} = \left[ 1 + \frac{(k_{F,N}^2 - k_{F,S}^2)^2}{4\,k_{F,N}^2 k_{F,S}^2}
+      \sin^2(k_{F,N} L) \right]^{-1},
+      $$
+      <p>
+        which equals one whenever $k_{F,N} L = m\pi$ (Fabry-Pérot resonances). For a long ballistic
+        junction ($L \gg \xi_0$) at zero temperature, the Ishii result is a sawtooth:
+      </p>
+      $$
+      I(\phi) = \frac{e v_F}{\pi L}\,\phi, \qquad |\phi| &lt; \pi .
+      $$
+    </section>
+
+    <section aria-labelledby="results">
+      <h2 id="results">Results</h2>
+
+      <figure>
+        <a href="img/ch5_phase_profile_fpb.png">
+          <img src="img/ch5_phase_profile_fpb.png" width="1000" height="600" loading="lazy"
+               alt="Three stacked panels versus site index: gap and pair-correlation amplitude, phase of the pair correlation, and bond current, for a junction with 30 normal sites.">
+        </a>
+        <figcaption>
+          Gap, phase and current profiles with the FPB condition ($N_N = 30$). The gap vanishes in
+          the normal region, a phase gradient develops in the leads, and the current is uniform
+          along the chain between the pinned sites.
+        </figcaption>
+      </figure>
+
+      <figure>
+        <a href="img/ch5_cpr_temperature_short.png">
+          <img src="img/ch5_cpr_temperature_short.png" width="777" height="578" loading="lazy"
+               alt="Current versus phase difference between 0 and pi for five temperatures; the maximum decreases and moves from above 2 radians towards pi over 2 as temperature increases.">
+        </a>
+        <figcaption>
+          CPR of a short transparent junction ($N_N = 10$, FPL) at several temperatures. At low
+          temperature the CPR is strongly non-sinusoidal; as $T$ approaches $T_c$ the critical
+          current decreases and the shape evolves towards $\sin\phi$.
+        </figcaption>
+      </figure>
+
+      <figure>
+        <a href="img/ch5_critical_vs_muN_long_fpl.png">
+          <img src="img/ch5_critical_vs_muN_long_fpl.png" width="1600" height="1607" loading="lazy"
+               alt="Critical phase (top) and critical current on a logarithmic scale (bottom) versus the chemical potential of the normal region, for five temperatures, showing regularly spaced peaks.">
+        </a>
+        <figcaption>
+          Critical phase and critical current against the normal-region chemical potential $\mu_N$
+          for a long junction ($N_N = 30$, $\mu_S = 0$, FPL). The regularly spaced peaks are
+          Fabry-Pérot resonances; raising the temperature lowers their amplitude without moving them.
+        </figcaption>
+      </figure>
+
+      <figure>
+        <a href="img/ch6_beenakker_mismatch.png">
+          <img src="img/ch6_beenakker_mismatch.png" width="865" height="769" loading="lazy"
+               alt="Critical phase (top) and critical current (bottom) versus temperature: two analytical curves, with and without mismatch, and the numerical BdG points lying below them.">
+        </a>
+        <figcaption>
+          Short mismatched junction ($\mu_N = 1.5$, $\mu_S = 0$): fixed-gap BdG result compared with
+          the ballistic formula and with the Beenakker formula using the mismatch transmission.
+          Including the mismatch moves the analytical curve towards the numerical data, but a
+          clear discrepancy remains.
+        </figcaption>
+      </figure>
+
+      <figure>
+        <a href="img/ch7_sawtooth_fpl.png">
+          <img src="img/ch7_sawtooth_fpl.png" width="777" height="577" loading="lazy"
+               alt="Current versus phase difference from minus two pi to two pi, linear around zero and dropping sharply near plus and minus pi, forming a sawtooth.">
+        </a>
+        <figcaption>
+          Zero-temperature CPR of a long transparent junction ($N_N = 30$, FPL) over
+          $[-2\pi, 2\pi]$: the sawtooth shape predicted by Ishii.
+        </figcaption>
+      </figure>
+
+      <figure>
+        <a href="img/ch7_slope_vs_length.png">
+          <img src="img/ch7_slope_vs_length.png" width="778" height="478" loading="lazy"
+               alt="Log-log plot of the slope of the current-phase relation versus normal-region length from 30 to 200 sites; the points fall on a straight decreasing line.">
+        </a>
+        <figcaption>
+          Slope of the CPR near $\phi = 0$ against the normal-region length, on a log-log scale.
+          It is proportional to $1/L$ over all lengths studied, as the Ishii formula predicts.
+        </figcaption>
+      </figure>
+
+      <p>
+        In long junctions, the current was also split into the contributions of the bound states
+        ($|E| &lt; \Delta_0$) and of the continuum ($|E| &gt; \Delta_0$): the two nearly cancel, and
+        their sum is the linear sawtooth.
+      </p>
+    </section>
+
+    <section aria-labelledby="contribution">
+      <h2 id="contribution">My contribution</h2>
+      <p>
+        I am the sole author of the report and of the code: the solver package, one script per
+        figure, the stored simulation data and the tests. The report also contains the analytical
+        derivations (Andreev reflection amplitudes, bound-state condition, mismatch transmission)
+        that the simulations are compared with.
+      </p>
+    </section>
+
+    <section aria-labelledby="limits">
+      <h2 id="limits">Limits and open questions</h2>
+      <ul>
+        <li>
+          Neither boundary condition is fully satisfactory: FPL does not conserve current in the
+          leads, and FPB cannot reach the critical current of short junctions. A fully
+          current-conserving scheme, with a self-consistently adjusted phase gradient in the leads,
+          exists in the literature and was not implemented here.
+        </li>
+        <li>
+          The agreement with the Beenakker formula is qualitative. A significant quantitative
+          discrepancy remains, attributed to the approximations made when computing the
+          transmission $\mathcal{T}$ from the chemical potentials.
+        </li>
+        <li>
+          The model is strictly one-dimensional (a single channel), s-wave, and has no interface
+          barrier.
+        </li>
+        <li>
+          The coherence length estimated from the Fermi velocity ($\xi_0 \approx 20$ sites) is only
+          approximate; in practice the effective value is closer to 10 sites.
+        </li>
+        <li>
+          In long junctions $\phi_{\max}(T)$ is weakly non-monotonic, with a minimum before it
+          rises to $\pi/2$ near $T_c$. This is observed with both boundary conditions and is
+          reported without an analytical explanation.
+        </li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="documents">
+      <h2 id="documents">Code and documents</h2>
+      <ul>
+        <li>
+          <a href="https://github.com/antoinearnould01-cloud/bdg-josephson-junctions">Code, data and figure scripts on GitHub</a>
+        </li>
+        <li>
+          <a href="https://github.com/antoinearnould01-cloud/bdg-josephson-junctions/blob/main/report/report.pdf">Report (PDF)</a>
+        </li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="skills">
+      <h2 id="skills">Skills</h2>
+      <ul class="tags">
+        <li>Python</li>
+        <li>NumPy / SciPy</li>
+        <li>Bogoliubov-de Gennes theory</li>
+        <li>Tight-binding models</li>
+        <li>Self-consistent mean field</li>
+        <li>Scattering-matrix theory</li>
+        <li>pytest</li>
+        <li>LaTeX</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="page">
+      <span>&copy; <span data-year>2026</span> Antoine Arnould</span>
+      <a href="#top">Back to top</a>
+    </div>
+  </footer>
+</body>
+</html>

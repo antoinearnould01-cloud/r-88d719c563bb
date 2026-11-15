@@ -1,0 +1,2 @@
+KaTeX 0.16.11 (MIT License, https://katex.org), copied from the official release archive.
+Frozen copy: katex.min.css, katex.min.js, auto-render.min.js and the woff2 fonts. Do not update.
