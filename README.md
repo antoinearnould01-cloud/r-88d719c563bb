@@ -1,7 +1,8 @@
 # Research portfolio
 
 Static site (plain HTML, CSS and JavaScript, no build step), published with GitHub Pages
-from the `main` branch at <https://antoinearnould01-cloud.github.io>.
+from the `main` branch at <https://antoinearnould01-cloud.github.io/r-88d719c563bb/>.
+The address is not listed anywhere: share it by link only.
 
 ## Add a project
 

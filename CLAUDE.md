@@ -1,7 +1,8 @@
 # Repository rules
 
 Personal research portfolio of Antoine Arnould. Static site served by GitHub Pages from
-`main` (root), with `.nojekyll`. Site language: English. Tone: sober, factual, academic.
+`main` (root), with `.nojekyll`, as the project site `/r-88d719c563bb/` (the repository name is
+random on purpose; `404.html` is the only file that contains it as an absolute path). Site language: English. Tone: sober, factual, academic.
 
 ## Permanent rules
 
